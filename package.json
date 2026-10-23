@@ -1,0 +1,151 @@
+{
+  "name": "what-agent-touched",
+  "displayName": "What Agent Touched",
+  "description": "See which files AI agent sessions changed: explorer M/A/D colors and an automatic diff against the original when you open a changed file. Claude Code hook included.",
+  "version": "0.1.1",
+  "publisher": "Tsuki0125",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Tsuki0125/what-agent-touched.git"
+  },
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "agent",
+    "ai",
+    "claude code",
+    "diff",
+    "changes"
+  ],
+  "extensionKind": [
+    "workspace"
+  ],
+  "main": "./extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "whatAgentTouched.openDiff",
+        "title": "What Agent Touched: Open Diff Against Original",
+        "icon": "$(diff)"
+      },
+      {
+        "command": "whatAgentTouched.clear",
+        "title": "What Agent Touched: Clear (Start a New Round)",
+        "icon": "$(clear-all)"
+      },
+      {
+        "command": "whatAgentTouched.refresh",
+        "title": "What Agent Touched: Refresh",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "whatAgentTouched.menu",
+        "title": "What Agent Touched: Menu"
+      },
+      {
+        "command": "whatAgentTouched.installHook",
+        "title": "What Agent Touched: Install Claude Code Hook"
+      },
+      {
+        "command": "whatAgentTouched.uninstallHook",
+        "title": "What Agent Touched: Uninstall Claude Code Hook"
+      }
+    ],
+    "views": {
+      "explorer": [
+        {
+          "id": "whatAgentTouched.changes",
+          "name": "What Agent Touched"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "whatAgentTouched.clear",
+          "when": "view == whatAgentTouched.changes",
+          "group": "navigation"
+        },
+        {
+          "command": "whatAgentTouched.refresh",
+          "when": "view == whatAgentTouched.changes",
+          "group": "navigation"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "whatAgentTouched.openDiff",
+          "when": "!explorerResourceIsFolder",
+          "group": "navigation@99"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "whatAgentTouched.openDiff",
+          "when": "resourceScheme == file && !isInDiffEditor",
+          "group": "navigation@99"
+        }
+      ]
+    },
+    "colors": [
+      {
+        "id": "whatAgentTouched.modifiedForeground",
+        "description": "Files an agent modified.",
+        "defaults": { "dark": "#E2C08D", "light": "#B58900", "highContrast": "#E2C08D" }
+      },
+      {
+        "id": "whatAgentTouched.addedForeground",
+        "description": "Files an agent created.",
+        "defaults": { "dark": "#73C991", "light": "#2E8B57", "highContrast": "#73C991" }
+      },
+      {
+        "id": "whatAgentTouched.deletedForeground",
+        "description": "Files an agent deleted.",
+        "defaults": { "dark": "#F14C4C", "light": "#D32F2F", "highContrast": "#F14C4C" }
+      }
+    ],
+    "configuration": {
+      "title": "What Agent Touched",
+      "properties": {
+        "whatAgentTouched.autoOpenDiff": {
+          "type": "boolean",
+          "default": true,
+          "description": "When a file an agent changed is opened, show it as a diff against its original (once per change)."
+        },
+        "whatAgentTouched.lookbackHours": {
+          "type": "number",
+          "default": 24,
+          "description": "Show agent sessions active within this many hours."
+        },
+        "whatAgentTouched.retentionDays": {
+          "type": "number",
+          "default": 7,
+          "description": "Delete recorded originals of sessions idle for longer than this."
+        },
+        "whatAgentTouched.pollIntervalMs": {
+          "type": "number",
+          "default": 2000,
+          "description": "How often to re-check recorded sessions and touched files."
+        },
+        "whatAgentTouched.storeDir": {
+          "type": "string",
+          "default": "",
+          "description": "Store directory written by the hooks. Empty = $WHAT_AGENT_TOUCHED_HOME or ~/.what-agent-touched."
+        },
+        "whatAgentTouched.pythonPath": {
+          "type": "string",
+          "default": "",
+          "description": "Python used by the Install/Uninstall Hook commands. Empty = auto (py -3 / python / python3 on Windows, python3 / python elsewhere)."
+        }
+      }
+    }
+  }
+}
