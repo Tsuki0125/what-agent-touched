@@ -26,6 +26,14 @@
     "workspace"
   ],
   "main": "./extension.js",
+  "files": [
+    "extension.js",
+    "store.js",
+    "README.md",
+    "LICENSE",
+    "hooks/claude_code.py",
+    "hooks/install_claude_code_hook.py"
+  ],
   "activationEvents": [
     "onStartupFinished"
   ],

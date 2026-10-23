@@ -6,20 +6,17 @@ import zipfile
 from xml.sax.saxutils import escape
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-FILES = [
-    "package.json",
-    "extension.js",
-    "store.js",
-    "README.md",
-    "LICENSE",
-    "hooks/claude_code.py",
-    "hooks/install_claude_code_hook.py",
-]
 
 
 def main():
     with open(os.path.join(ROOT, "package.json"), encoding="utf-8") as f:
         pkg = json.load(f)
+    # package.json "files" is the single whitelist, shared with vsce.
+    # Plain file paths only: no globs or directories.
+    files = ["package.json"] + pkg["files"]
+    for rel in files:
+        if not os.path.isfile(os.path.join(ROOT, *rel.split("/"))):
+            raise SystemExit("package.json files: not a file: %s" % rel)
     manifest = """<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
@@ -66,7 +63,7 @@ def main():
     with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
         z.writestr("[Content_Types].xml", content_types)
         z.writestr("extension.vsixmanifest", manifest)
-        for rel in FILES:
+        for rel in files:
             z.write(os.path.join(ROOT, *rel.split("/")), "extension/" + rel)
     print(out)
 
